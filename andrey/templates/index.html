@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Магазин Велосипедов</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #f4f4f4, #e0e0e0);
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            padding: 40px;
+            text-align: center;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 36px;
+            color: #333;
+            margin-bottom: 30px;
+            background: linear-gradient(45deg, #007bff, #00bcd4);
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        /* Стили для фильтров и сортировки */
+        .filters-container {
+            margin-bottom: 30px;
+        }
+
+        .filter-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .filter-buttons button,
+        .year-filter-buttons button {
+            padding: 12px 20px;
+            font-size: 16px;
+            background: linear-gradient(45deg, #007bff, #00bcd4);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.2s ease;
+            text-decoration: none;  /* Убираем подчеркивание */
+        }
+
+        .filter-buttons button:hover,
+        .year-filter-buttons button:hover {
+            background: linear-gradient(45deg, #0056b3, #0097a7);
+            transform: scale(1.05);
+        }
+
+        .filter-buttons button.active,
+        .year-filter-buttons button.active {
+            background: linear-gradient(45deg, #0056b3, #0097a7);
+            border: 2px solid #003366;  /* Добавим обводку для активной кнопки */
+            color: white;
+            font-weight: bold;
+            transform: scale(1.1); /* Увеличим активную кнопку */
+        }
+
+        /* Убираем стандартный фокус */
+        .filter-buttons button:focus,
+        .year-filter-buttons button:focus {
+            outline: none;
+        }
+
+        .year-filter-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+
+        /* Стили для пагинации */
+        .pagination {
+            margin: 30px 0;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .pagination a,
+        .pagination button {
+            padding: 12px 20px;
+            font-size: 16px;
+            background: linear-gradient(45deg, #007bff, #00bcd4);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.2s ease;
+            text-decoration: none;  /* Убираем подчеркивание */
+        }
+
+        .pagination a:hover,
+        .pagination button:hover {
+            background: linear-gradient(45deg, #0056b3, #0097a7);
+            transform: scale(1.05);
+        }
+
+        .pagination a.active,
+        .pagination button.active {
+            background: linear-gradient(45deg, #0056b3, #0097a7);
+            border: 2px solid #003366;  /* Добавляем обводку для активной кнопки */
+            color: white;
+            font-weight: bold;
+            transform: scale(1.1); /* Увеличим активную кнопку */
+        }
+
+        /* Убираем стандартный фокус */
+        .pagination a:focus,
+        .pagination button:focus {
+            outline: none;
+        }
+
+        /* Стили для disabled кнопок (например, первая и последняя страница) */
+        .pagination a.disabled,
+        .pagination button.disabled {
+            background: #cccccc;
+            pointer-events: none;
+            cursor: not-allowed;
+        }
+
+        .pagination input[type="number"] {
+            padding: 8px 12px;
+            width: 60px;
+            text-align: center;
+            font-size: 16px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            margin-left: 10px;
+        }
+
+        .pagination button {
+            padding: 10px 15px;
+            font-size: 16px;
+            background: linear-gradient(45deg, #28a745, #34d058);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .pagination button:hover {
+            background: linear-gradient(45deg, #218838, #2fa85e);
+        }
+
+        /* Стили для карточек продуктов */
+        .product-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .product-card {
+            background: linear-gradient(145deg, #ffffff, #f1f1f1);
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            width: 280px;
+            height: 380px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-sizing: border-box;
+            transition: transform 0.3s ease, background 0.3s ease;
+        }
+
+        .product-card:hover {
+            transform: scale(1.05);
+            background: linear-gradient(145deg, #f9f9f9, #f1f1f1);
+        }
+
+        .product-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: contain;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .product-info h3 {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #007bff;
+        }
+
+        .product-card .price {
+            color: #ff5c5c;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .product-card .out-of-stock {
+            color: red;
+            font-size: 16px;
+        }
+
+        .product-card a {
+            text-decoration: none;
+            color: #007bff;
+            font-size: 14px;
+            margin-top: 15px;
+            transition: color 0.3s ease;
+        }
+
+        .product-card a:hover {
+            color: #0056b3;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Список горных велосипедов</h1>
+
+        <!-- Контейнер для фильтров и сортировки -->
+        <div class="filters-container">
+            <div class="filter-buttons">
+                <form method="GET" action="/">
+                    <!-- Сортировка с сохранением значения фильтра по году -->
+                    <input type="hidden" name="year" value="{{ filter_year }}">
+                    <button type="submit" name="sort" value="price_desc" {% if sort_by == 'price_desc' %}class="active"{% endif %}>Сортировать по убыванию цены</button>
+                    <button type="submit" name="sort" value="price_asc" {% if sort_by == 'price_asc' %}class="active"{% endif %}>Сортировать по возрастанию цены</button>
+                    <button type="submit" name="sort" value="alphabetical" {% if sort_by == 'alphabetical' %}class="active"{% endif %}>Сортировать по алфавиту</button>
+                </form>
+            </div>
+
+            <!-- Кнопки фильтрации по годам -->
+            <div class="year-filter-buttons">
+                <form method="GET" action="/">
+                    <!-- Сортировка сохраняется при изменении года -->
+                    <input type="hidden" name="sort" value="{{ sort_by }}">
+                    <button type="submit" name="year" value="all" {% if filter_year == 'all' %}class="active"{% endif %}>Все года</button>
+                    {% for year in range(2018, 2026) %}
+                        <button type="submit" name="year" value="{{ year }}" {% if filter_year == year|string %}class="active"{% endif %}>
+                            {{ year }}
+                        </button>
+                    {% endfor %}
+                </form>
+            </div>
+        </div>
+
+        <!-- Продукты -->
+        <div class="product-list">
+            {% for product in products %}
+            <div class="product-card">
+                <img src="{{ product.image }}" alt="Изображение товара">
+                <div class="product-info">
+                    <h3>{{ product.name }}</h3>
+                    {% if product.price == "Нет в наличии" or product.price is none %}
+                        <p class="out-of-stock">Нет в наличии</p>
+                    {% else %}
+                        <p class="price">Цена: {{ product.price }} руб</p>
+                    {% endif %}
+                </div>
+                <a href="{{ product.link }}" target="_blank">Перейти к товару</a>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Пагинация -->
+        <div class="pagination">
+            <a href="/?page=1&sort={{ sort_by }}&year={{ filter_year }}">Первая</a>
+            {% for display_page in display_pages %}
+                {% if display_page == page %}
+                    <a class="active">{{ display_page }}</a>
+                {% else %}
+                    <a href="/?page={{ display_page }}&sort={{ sort_by }}&year={{ filter_year }}">{{ display_page }}</a>
+                {% endif %}
+            {% endfor %}
+            <a href="/?page={{ total_pages }}&sort={{ sort_by }}&year={{ filter_year }}">Последняя</a>
+
+            <form action="/" method="get" style="display: inline-block; margin-left: 10px;">
+                <input type="number" name="page" min="1" max="{{ total_pages }}" value="{{ page }}" required>
+                <button type="submit">Перейти</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
